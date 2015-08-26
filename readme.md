@@ -1,0 +1,1 @@
+See [dotfiles-meta](https://github.com/kairuku-dotfiles-pseudo-org/1-dotfiles-meta/blob/master/readme.md) for documentation, screenshots, and anything else relevant, but not yet directly contained in these quasi-sub-repositories.
