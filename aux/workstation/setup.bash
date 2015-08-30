@@ -1,14 +1,20 @@
 #!/usr/bin/bash
 
-# depends on "lnif" function (which depends on explicit $HOME paths); 
+# depends on "divyel" and "lnif" functions (which depends on explicit $HOME paths); 
 # see separate bash repo
 source $BASH_CUSTOM_FUNCTIONS_FILE
+divyel
 
 CURRENT_DIR=$(pwd)
 
 #···············································································
 #   SETUP DESKTOP ENTRIES AND ICONS
 #···············································································
+
+# look for any new options if the utility gets updated
+# could be interesting to have a way to ping the spec page to check for updates to the standard
+echo "Checking if the validator has been updated with additional flags ..."
+desktop-file-validate --help
 
 LAUNCH_BASE_DIR='/z/750/dot/repos/workstation-arbitrary/config/generic/freedesktop/desktop_entries'
 LAUNCH_EDIT="$LAUNCH_BASE_DIR/launchers_editable"
@@ -21,23 +27,38 @@ SRC_ICON="$LAUNCH_BASE_DIR/src_icons"
 TGT_ICON='/home/rigel/.local/share/icons/00_custom_launcher_icons'
 
 cd $LAUNCH_EDIT
-echo "Looping through desktop entries ..."
+echo "Looping through overlay/dash desktop entries ..."
 for ENTRY_EDIT in *.ini; do
     ENTRY_BASE=$(basename -s .ini "$ENTRY_EDIT")
     lnif "$LAUNCH_EDIT/$ENTRY_EDIT" "$SRC_LAUNCH/$ENTRY_BASE.desktop"
 done
 
 cd $SRC_LAUNCH
-echo "Validating launchers ..."
+echo "Validating overlay/dash launchers ..."
 desktop-file-validate --warn-kde *.desktop
-
-# look for any new options if the utility gets updated
-# could be interesting to have a way to ping the spec page to check for updates to the standard
-echo "Checking if the validator has been updated with additional flags ..."
-desktop-file-validate --help
 
 lnif "$SRC_LAUNCH"  "$TGT_LAUNCH"
 lnif "$SRC_ICON"    "$TGT_ICON"
+
+#···············································································
+#   SETUP AUTOSTART ITEMS
+#···············································································
+
+ASTART_EDIT="$LAUNCH_BASE_DIR/launchers_autostart/active/global_editable"
+SRC_ASTART='/z/750/dot/repos/workstation-arbitrary/config/generic/autostart/global_src'
+
+cd $ASTART_EDIT
+echo "Looping through autostart desktop entries ..."
+for ENTRY_EDIT in *.ini; do
+    ENTRY_BASE=$(basename -s .ini "$ENTRY_EDIT")
+    lnif "$ASTART_EDIT/$ENTRY_EDIT" "$SRC_ASTART/$ENTRY_BASE.desktop"
+done
+
+cd $SRC_ASTART
+echo "Validating autostart launchers ..."
+desktop-file-validate --warn-kde *.desktop
+
+lnif "$SRC_ASTART" '/home/rigel/.config/autostart'
 
 #···············································································
 #   SETUP XDG_DIRS
